@@ -6,6 +6,9 @@
             <div class="mt-4 d-grid gap-2 ">
                 <a class="btn btn-secondary" asp-controller="Employees" asp-action="Create">Registrar un nuevo empleado</a>
                 <a class="btn btn-success" asp-controller="Historiales" asp-action="Index">Historial</a>
+                <form asp-controller="Empleados" asp-action="Logout" method="post">
+                    <button class="btn btn-primary" type="submit">Cerrar sesion</button>
+                </form>
             </div>
         </div>
         <div class="col-md-8">
