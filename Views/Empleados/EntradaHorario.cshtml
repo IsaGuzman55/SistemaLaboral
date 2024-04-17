@@ -1,0 +1,33 @@
+@model Empleado
+
+
+<div class="container">
+    <h1 class="text-center mb-4">Registrar Entrada Y Salida @Model.Id</h1>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <div class="mt-4 d-grid gap-2 ">
+               <a class="btn btn-secondary" asp-controller="Empleados" asp-action="Create">Registrar un nuevo empleado</a>
+                <a class="btn btn-success" asp-controller="Empleados" asp-action="Index">Listado de empleados</a>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card col-md-8">
+                <div class="card-body">
+                    <form asp-action="GuardarEntrada" asp-controller="Historiales" method="post">
+                        <!-- Hidden field for Entrada -->
+                        <input   value="@DateTime.Now" />
+
+                        <input name="empleadoId" value="@Model.Id" />
+                        <!-- Submit button for Historial -->
+                        <button type="submit" class="btn btn-primary btn-block mb-4">Guardar Entrada</button>
+                    </form>
+                </div>
+            </div>
+
+           
+        </div>
+
+
+    </div>
+</div>
