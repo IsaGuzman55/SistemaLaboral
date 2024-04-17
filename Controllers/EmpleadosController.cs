@@ -16,24 +16,7 @@ namespace SistemaLaboral.Controllers{
         public async Task<IActionResult> Index(){
             return View(await _context.Empleados.ToListAsync());
         }
-        
-      
-        
-        public async Task<IActionResult> Login(string email, string password)
-        {
-            // Buscar el usuario por correo electrónico y contraseña en la base de datos
-            var empleado = await _context.Empleados.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
-
-            if (empleado != null)
-            {
-                // Autenticación exitosa
-                return RedirectToAction("Index");
-            }
-
-            // Si no se encuentra el usuario en la base de datos, la autenticación falla
-            ModelState.AddModelError(string.Empty, "Correo o contraseña incorrectos.");
-            return View();
-        }
+    
 
 
         public async Task<IActionResult> EntradaHorario(int? id){
@@ -73,6 +56,38 @@ namespace SistemaLaboral.Controllers{
             _context.SaveChanges();
             // Retornar la vista con el ViewModel
             return RedirectToAction("Index");
+        }
+
+
+        //LOGIN
+        public IActionResult Login(){
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login(string email, string password){
+            var Empleado = _context.Empleados.FirstOrDefault(e => e.Email == email && e.Password == password);
+            if (Empleado!= null)
+            {
+                /* Empleado.EntryTime = DateTime.Now; */
+                HttpContext.Session.SetString("Empleado", Empleado.Id.ToString());
+                _context.Empleados.Update (Empleado);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else {
+                ViewBag.Error = "usuario o contraseña incorrectos";
+                return View();
+            }
+        }
+
+        public IActionResult Logout(){
+
+            string id = HttpContext.Session.GetString("Empleado");
+            var Empleado = _context.Empleados.FirstOrDefault(e => e.Id == Convert.ToInt32(id));
+            /*  Empleado.ExitTime = DateTime.Now; */
+            _context.Empleados.Update(Empleado);
+            _context.SaveChanges();
+            return RedirectToAction("Login");
         }
 
 
