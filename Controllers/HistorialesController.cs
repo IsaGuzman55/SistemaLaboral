@@ -10,28 +10,34 @@ namespace SistemaLaboral.Controllers{
         _context = context;
        }
 
-        
         [HttpPost]
-        public IActionResult GuardarEntrada(int empleadoId)
+        public IActionResult GuardarEntrada()
         {
             // Obtener la fecha y hora actual
             var fechaHoraActual = DateTime.Now;
-
+            var empleadoId = HttpContext.Session.GetString("EmpleadoId");
             // Crear una instancia de Historial con los datos obtenidos
             var historial = new Historial
             {
                 Entrada = fechaHoraActual,
-                Empleado_Id = empleadoId,
+                Empleado_Id = Convert.ToInt32(empleadoId), 
             };
 
             // Agregar el historial al contexto de base de datos y guardar los cambios
             _context.Historiales.Add(historial);
             _context.SaveChanges();
 
+    
+            if (Request.Form["IngresoButton"] == "Ingreso"){
+                // El botón "Ingreso" se ha presionado
+                TempData["MensajeConfirmacion"]= $"El Id: {empleadoId} se envio a las {fechaHoraActual}";
+                return RedirectToAction("Index", "Empleados");
+            }
+
+
             // Redirigir a la página deseada
             return RedirectToAction("Index", "Empleados");
         }
-
 
         [HttpPost]
         public IActionResult GuardarSalida(int empleadoId, DateTime salida)
