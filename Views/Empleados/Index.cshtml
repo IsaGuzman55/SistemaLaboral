@@ -4,9 +4,9 @@
     <div class="row mt-3 grid gap-5">
         <div class="col-md-8">
             <div class="col-md-8" >
-                <form  asp-controller="Employees" asp-action="Search" method="get">
+                <form  asp-controller="Empleados" asp-action="Search" method="get">
                     <div class="input-group mb-3">
-                    <input type="text" name="searchString" class="form-control" placeholder="Search">
+                    <input type="text" name="Search" class="form-control" placeholder="Search">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="submit">Search</button>
                     </div>
@@ -42,7 +42,7 @@
         </div>
         <div class="col-md-3">
             <div class="mt-4 d-grid gap-2">
-                <a class="btn btn-primary mb-4 mt-5" asp-controller="Empleados" asp-action="Create">Registrar un nuevo empleado</a>
+                <a class="btn btn-primary mb-4 mt-5" asp-controller="Empleados" asp-action="Register">Crear un nuevo empleado</a>
 
                 <form asp-action="GuardarEntrada" asp-controller="Historiales" method="post">
                     <button class="btn btn-dark mb-4" type="submit" name="IngresoButton" value="Ingreso">Registrar Ingreso</button>

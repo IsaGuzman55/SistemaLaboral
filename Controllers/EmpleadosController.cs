@@ -11,12 +11,6 @@ namespace SistemaLaboral.Controllers{
         _context = context;
        }
 
-
-        public async Task<IActionResult> Index(){
-            string nombre = HttpContext.Session.GetString("EmpleadoName");
-            ViewBag.Nombre = nombre;
-            return View(await _context.Empleados.ToListAsync());
-        }
         [HttpPost]
         public IActionResult Index(int? id, Empleado empleado)
         {
@@ -61,7 +55,7 @@ namespace SistemaLaboral.Controllers{
             {
                 /* Empleado.EntryTime = DateTime.Now; */
                 /* Empleado.EntryTime = DateTime.Now; */
-                HttpContext.Session.SetString("EmpleadoId", Empleado.Id.ToString());
+                HttpContext.Session.SetInt32("EmpleadoId", Empleado.Id);
                 HttpContext.Session.SetString("EmpleadoName", Empleado.Names);
                 _context.Empleados.Update(Empleado);
                 _context.SaveChanges();
@@ -76,16 +70,30 @@ namespace SistemaLaboral.Controllers{
                 return View();
             }
 
+
+        }
+        public async Task<IActionResult> Index(){
+            string nombre = HttpContext.Session.GetString("EmpleadoName");
+            var EmployeId = HttpContext.Session.GetInt32("EmpleadoId");
+
+            ViewBag.Nombre = nombre;
+
+            if(EmployeId != null){
+            return View(await _context.Empleados.ToListAsync());
+
+            }
+            else{
+                return RedirectToAction("Login");
+            }
         }
 
-        public IActionResult Logout(){
 
-            string id = HttpContext.Session.GetString("EmpleadoId");
-            var Empleado = _context.Empleados.FirstOrDefault(e => e.Id == Convert.ToInt32(id));
-            /*  Empleado.ExitTime = DateTime.Now; */
-            /* _context.Empleados.Update(Empleado); */
-           /*  _context.SaveChanges(); */
-            return RedirectToAction("Login");
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");            
         }
 
         public async Task<IActionResult> Eliminar(int id){
@@ -95,6 +103,23 @@ namespace SistemaLaboral.Controllers{
             return RedirectToAction("Eliminar");
         }
 
+        public IActionResult Register(){
+        return View();
+       }
+       [HttpPost]
+       public IActionResult Register(Empleado r){
+        _context.Empleados.Add(r);
+        _context.SaveChanges();
+        return RedirectToAction("Index");
+    
+       }
+       public IActionResult Search(string search){
+        var empleados =  _context.Empleados.AsQueryable();
+            if (!string.IsNullOrEmpty(search)){
+                empleados = empleados.Where(e => e.Names.Contains(search) || e.LastNames.Contains(search) || e.Email.Contains(search) );
+            }
+            return View("Index", empleados.ToList());
+       }
 
     }
 }
