@@ -1,0 +1,20 @@
+@model Empleado
+@{
+    ViewData["Register"]= "Register";
+}
+
+<h1>Create Empleado</h1>
+<form asp-action="Register" method="post">
+    <div class="form-group">
+        <label for="">Name:</label>
+        <input asp-for="Names" class="form-control">
+        <label for="">LastName:</label>
+        <input asp-for="LastNames" class="form-control">
+        <label for="">Email:</label>
+        <input asp-for="Email" class="form-control">
+        <label for="">Password:</label>
+        <input asp-for="Password" class="form-control">
+
+    </div>
+    <button>Send</button>
+</form>
