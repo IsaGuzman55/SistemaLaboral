@@ -6,9 +6,9 @@
 <div class="container d-flex justify-content-center aling-items-center mt-5">
     <div class="card col-md-8" style="box-shadow: 0 0 10px rgb(105, 104, 104);">
         <div class="card-body">
-            <h1 class="text-center">Registrarse</h1>
+            <h1 class="text-center">Crear Empleado</h1>
         
-            <form asp-action="Register" method="post">
+            <form asp-controller="Empleados" asp-action="Create" method="post">
 
                 <div class="from-group mb-3">
                     <label for="">Nombre:</label>
@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="d-flex justify-content-center aling-items-center">
-                    <button class="btn btn-primary me-4" type="submit">Registrarse</button> 
+                    <button class="btn btn-primary me-4" type="submit">Crear Empleado</button> 
                     <a class="btn btn-secondary" asp-action="Index" asp-controller="Home">Volver al inicio</a>
                 </div>
                 

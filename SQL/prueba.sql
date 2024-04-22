@@ -9,12 +9,14 @@ CREATE TABLE Empleados(
 
 SELECT * FROM `Empleados`;
 
+
 CREATE TABLE Historiales(
     Id INT PRIMARY KEY AUTO_INCREMENT,
     Entrada DATETIME,
-    Salida DATETIME,
+    Salida DATETIME NULL,
     Empleado_Id INT
 );
+
 ALTER TABLE `Historiales` ADD FOREIGN KEY (Empleado_Id) REFERENCES Empleados(Id);
 
 DROP TABLE `Empleados`;

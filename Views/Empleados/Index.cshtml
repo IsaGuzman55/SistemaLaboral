@@ -1,19 +1,39 @@
-
 <div class="container">
     <h1 class="text-center mb-4">@ViewBag.Nombre</h1>
-    <div class="row mt-3 grid gap-5">
-        <div class="col-md-8">
-            <div class="col-md-8" >
-                <form  asp-controller="Empleados" asp-action="Search" method="get">
-                    <div class="input-group mb-3">
-                    <input type="text" name="Search" class="form-control" placeholder="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </div>
-                    </div>
-                </form> 
-            </div>
 
+    <div class="row mt-5 grid gap-5">
+        <div class="col-md-12">
+            <div class="row d-flex justify-content-center aling-items-center">
+                    @* Registrar o crear un nuevo empleado *@   
+                <div class="col-md-3 text-start">
+                    <a class="btn btn-success" asp-controller="Empleados" asp-action="Create">Crear un nuevo empleado</a>
+                </div>
+
+                    @* BUSCADOR DE EMPLEADOS *@
+                <div class="col-md-6 text-center">
+                    <form  asp-controller="Empleados" asp-action="Search" method="get">
+                        <div class="input-group mb-3">
+                        <input type="text" name="Search" class="form-control" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                        </div>
+                    </form> 
+                </div>
+
+                    @* CERRAR SESIÓN *@
+                <div class="col-md-3 text-end">
+                    <form asp-controller="Empleados" asp-action="Logout" method="post">
+                        <button class="btn btn-outline-primary" type="submit">Cerrar sesion</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row d-flex mt-5">
+        <div class="col-md-8 ms-2">
             <table class="table table-border border-dark mt-4">
                 <thead>
                     <tr>
@@ -31,35 +51,81 @@
                         <td>@empleado.LastNames</td>
                         <td>@empleado.Email</td>
                         <td>
-                            <a asp-route-id="@empleado.Id" asp-action="Eliminar" asp-controller="Empleados" class="btn btn-danger">Eliminar</a>
-                        </td>
-
-                       
+                            @* Eliminar Empleado *@
+                            <a asp-route-id="@empleado.Id" asp-action="Delete" asp-controller="Empleados" class="btn btn-danger">Eliminar</a>
+                            @* Ver historial de cada empleado *@
+                            <a asp-route-id="@empleado.Id" asp-action="ListarHistorial" asp-controller="Historiales" class="btn btn-primary">Ver Historial</a>
+                        </td>                       
                     </tr>
                 </tbody>
 }
             </table>
         </div>
-        <div class="col-md-3">
-            <div class="mt-4 d-grid gap-2">
-                <a class="btn btn-primary mb-4 mt-5" asp-controller="Empleados" asp-action="Register">Crear un nuevo empleado</a>
 
-                <form asp-action="GuardarEntrada" asp-controller="Historiales" method="post">
-                    <button class="btn btn-dark mb-4" type="submit" name="IngresoButton" value="Ingreso">Registrar Ingreso</button>
-                </form>
-            @if (TempData["MensajeConfirmacion"] != null){
-                <div class="alert alert-success" role="alert">
-                    @TempData["MensajeConfirmacion"]
-                </div>
-            }
+        <div class="col-md-3 mt-4 ms-5 text-center">
+            <h3>Registrar Horas</h3>
 
-                <a class="btn btn-dark mb-4" asp-controller="Historiales" asp-action="Index">Registrar Salida</a>
+            @* Verificar si el empleado ya habia ingresado la hora de entrada, si es así desabilitar el botón De ingresar ENTRADA*@
+                @{
+                    var idUltimaSesion = Context.Session.GetString("HistorialId");
+                }
 
-                <form asp-controller="Empleados" asp-action="Logout" method="post">
-                    <button class="btn btn-outline-primary" type="submit">Cerrar sesion</button>
-                </form>
-            </div>
+                @if (idUltimaSesion  == null)
+                {
+                    <form asp-action="GuardarEntrada" asp-controller="Historiales" method="post">
+                        <button class="btn btn-dark mb-2 mt-4" type="submit" name="IngresoButton" value="Ingreso" style="width: 250px;">Registrar Ingreso</button>
+                    </form>
+                }
+                else{
+                    <form asp-action="GuardarEntrada" asp-controller="Historiales" method="post">
+                        <button class="btn btn-dark mb-2 mt-4" type="submit" name="IngresoButton" value="Ingreso" disabled style="width: 250px;">Registrar Ingreso</button>
+                    </form>
+                    @if (TempData["MensajeConfirmacion"] != null)
+                    {
+
+                        <div class="alert alert-dark" role="alert">
+                            @TempData["MensajeConfirmacion"]
+                        </div>
+                    }
+                    else{
+                        <div class="alert alert-primary" role="alert">
+                            <div>@ViewBag.VerificacionEntrada</div>
+                        </div>
+                    }
+                } 
+
+            @* Verificar si el botón de Hora de SALIDA se oprimio, si es así este sedesabilita *@
+                @{
+                    var btnHoraSalida = Context.Session.GetString("HoraSalida");
+                }
+
+                @if (btnHoraSalida  != null)
+                {
+                    <form asp-action="GuardarSalida" asp-controller="Historiales" method="post">
+                        <button class="btn btn-dark mb-2 mt-3" type="submit" name="SalidaButton" style="width: 250px;" value="Salida" disabled  >Registrar Salida</button>
+                    </form>
+                    @if(TempData["MensajeIdHistorial"] != null){
+                        <div class="alert alert-dark" role="alert">
+                            @TempData["MensajeIdHistorial"]
+                        </div>
+                    }
+                    else{
+                        <div class="alert alert-primary" role="alert">
+                            <div>@ViewBag.VerificacionSalida</div>
+                        </div>
+                    }
+                }
+                else{
+                    <form asp-action="GuardarSalida" asp-controller="Historiales" method="post">
+                        <button class="btn btn-dark mb-2 mt-3" type="submit" name="SalidaButton" value="Salida" style="width: 250px;">Registrar Salida</button>
+                    </form>
+                    
+                }
+
         </div>
-      
+
+
+            
+        </div>
     </div>
 </div>

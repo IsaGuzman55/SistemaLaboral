@@ -11,40 +11,8 @@ namespace SistemaLaboral.Controllers{
         _context = context;
        }
 
-        [HttpPost]
-        public IActionResult Index(int? id, Empleado empleado)
-        {
-            _context.Empleados.Update(empleado);
-            _context.SaveChanges();
-            
-            // Crear un objeto Historial con los datos necesarios
-            var historial = new Historial
-            {
-                Empleado_Id = empleado.Id,
-                Entrada = DateTime.Now // Puedes establecer la fecha y hora de entrada como la fecha y hora actual
-            };
 
-            return RedirectToAction("Index");
-        }
-    
-
-        // SALIDA DEL EMPLEADO
-       [HttpPost]
-        public IActionResult SalidaHorario(int? id, Empleado empleado)
-        {
-            _context.Empleados.Update(empleado);
-            _context.SaveChanges();
-            // Retornar la vista con el ViewModel
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> SalidaHorario(int? id){
-            // Obtener el empleado correspondiente al ID proporcionado
-            return View (await _context.Empleados.FirstOrDefaultAsync(m => m.Id == id));
-        }
-
-
-        //LOGIN
+/* LOGIN O INICIAR SESION */
         public IActionResult Login(){
             return View();
         }
@@ -53,66 +21,89 @@ namespace SistemaLaboral.Controllers{
             var Empleado = _context.Empleados.FirstOrDefault(e => e.Email == email && e.Password == password);
             if (Empleado!= null)
             {
-                /* Empleado.EntryTime = DateTime.Now; */
-                /* Empleado.EntryTime = DateTime.Now; */
-                HttpContext.Session.SetInt32("EmpleadoId", Empleado.Id);
+                var ultimoRegistro = _context.Historiales.FirstOrDefault(x => x.Empleado_Id == Empleado.Id && x.Salida == null);
+                HttpContext.Session.SetString("EmpleadoId", Empleado.Id.ToString());
                 HttpContext.Session.SetString("EmpleadoName", Empleado.Names);
-                _context.Empleados.Update(Empleado);
+                HttpContext.Session.SetString("EmpleadoApellidos", Empleado.LastNames);
+                if(ultimoRegistro != null){
+                    HttpContext.Session.SetString("HistorialId", ultimoRegistro.Id.ToString());
+                }
                 _context.SaveChanges();
-
-                string id = HttpContext.Session.GetString("EmpleadoId");
-                 Console.WriteLine($"El ID:{id}");
                 return RedirectToAction("Index");
 
             }
             else {
-                ViewBag.Error = "usuario o contraseña incorrectos";
+                ViewBag.Error = "¡Correo o contraseña incorrectos!";
                 return View();
             }
-
-
         }
+
+
+/* LISTADO DE LOS EMPLEADOS */
         public async Task<IActionResult> Index(){
             string nombre = HttpContext.Session.GetString("EmpleadoName");
-            var EmployeId = HttpContext.Session.GetInt32("EmpleadoId");
-
-            ViewBag.Nombre = nombre;
+            string apellidos = HttpContext.Session.GetString("EmpleadoApellidos");
+            var EmployeId = HttpContext.Session.GetString("EmpleadoId");
+            ViewBag.Nombre = $"{nombre} {apellidos}";
+            ViewBag.VerificacionEntrada = $"{nombre}, ¡Ya registraste tu hora de entrada!";
+            ViewBag.VerificacionSalida = $"{nombre}, ¡Ya registraste tu hora de salida!";
 
             if(EmployeId != null){
-            return View(await _context.Empleados.ToListAsync());
+                return View(await _context.Empleados.ToListAsync());
 
             }
             else{
-                return RedirectToAction("Login");
+                return RedirectToAction("Index", "Historiales");
             }
         }
 
 
+/* CERRAR SESION */
         [HttpPost]
         public IActionResult Logout()
         {
-            
             HttpContext.Session.Clear();
-            return RedirectToAction("Login");            
+            return RedirectToAction("Index", "Home");            
         }
 
-        public async Task<IActionResult> Eliminar(int id){
+
+/* ELIMINAR EMPLEADOS */
+        public async Task<IActionResult> Delete(int id){
             var empleado = await _context.Empleados.FindAsync(id);
             _context.Empleados.Remove(empleado);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Eliminar");
+            return RedirectToAction("Index");
         }
 
+
+/* REGISTRAR EMPLEADOS */
+        [HttpGet]
         public IActionResult Register(){
-        return View();
-       }
+            return View();
+        }
+
        [HttpPost]
-       public IActionResult Register(Empleado r){
-        _context.Empleados.Add(r);
-        _context.SaveChanges();
-        return RedirectToAction("Index");
-    
-       }
+        public IActionResult Register(Empleado r){
+            _context.Empleados.Add(r);
+            _context.SaveChanges();
+            return RedirectToAction("Login");
+        }
+
+
+/* CREAR EMPLEADOS CUANDO YA SE INICIO SESION */
+        [HttpGet]
+        public IActionResult Create(){
+            return View();
+        }
+
+       [HttpPost]
+        public IActionResult Create(Empleado r){
+            _context.Empleados.Add(r);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+/* BUSCADOR DE EMPLEADOS */
        public IActionResult Search(string search){
         var empleados =  _context.Empleados.AsQueryable();
             if (!string.IsNullOrEmpty(search)){

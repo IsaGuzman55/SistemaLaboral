@@ -2,7 +2,29 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <a class="btn btn-success" asp-action="Login" asp-controller="Empleados">Login</a>
-    <a class="btn btn-success" asp-action="Register" asp-controller="Empleados">Registrar Nuevo Empleado</a>
+
+
+<div class="container" style="height: 80vh;">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <div class="card h-100" style="width: 400px; box-shadow: 0 0 10px rgb(105, 104, 104);">
+            <div class="card-body text-center">
+                <h5 class="card-title">Iniciar Sesión</h5>
+                <p class="card-text">Si ya estas registrado ingresa aquí</p>
+                <a class="btn btn-success btn-block" asp-action="Login" asp-controller="Empleados" style="width: 250px;">Log in</a>
+            </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card h-100" style="width: 400px; box-shadow: 0 0 10px rgb(105, 104, 104);">
+            <div class="card-body text-center mt-1">
+                <h5 class="card-title">Registrarse</h5>
+                <p class="card-text">Si quieres registrarte ingresa aquí</p>
+                <a class="btn btn-success btn-block" asp-action="Register" asp-controller="Empleados" style="width: 250px;">Registrar Nuevo Empleado</a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
 </div>

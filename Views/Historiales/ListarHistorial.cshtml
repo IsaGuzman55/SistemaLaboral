@@ -1,0 +1,48 @@
+@model List<Historial>
+
+@{
+    ViewData["Title"] = "Historial de cada empleado";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            @* Nombre del empleado al que pertenece el historial *@
+            <div class="row">
+                <div class="col-md-12 grid gap-5 text-center">
+                    <h1 class="mb-2">@ViewBag.Nombres</h1>
+                </div>
+            </div>
+
+            @* VOLVER AL LISTADO DE EMPLEADOS *@
+            <div class="row">
+                <div class="col-md-12 grid gap-5 text-center">
+                    <a class="btn btn-primary mb-4 mt-5" asp-controller="Empleados" asp-action="Index">Volver a Empleados</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-8">
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="col text-center">Fecha Entrada</th>
+                        <th class="col text-center">Fecha Salida</th>
+                    </tr>
+                </thead>
+
+    @foreach(var historial in Model){
+                <tbody>
+                    <tr>
+                        <td class="col text-center">@historial.Entrada</td>
+                        <td class="col text-center">@historial.Salida</td>
+                    </tr>
+                </tbody>
+    }
+            </table>
+
+        </div>
+    </div>
+</div>

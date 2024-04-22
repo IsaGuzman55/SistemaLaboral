@@ -13,7 +13,7 @@ options.UseMySql(
 
 //SESSION
 builder.Services.AddSession(options => {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 
@@ -31,12 +31,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
+
 //SESSION
 app.UseSession();
 
